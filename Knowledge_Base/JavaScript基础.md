@@ -1,4 +1,4 @@
-## JavaScript 基础
+##  JavaScript 基础
 
 * **JavaScript** 运行在客户端的脚本语言，不需要编译，由js解释器(js引擎)逐行解释执行。Node.js也可以用于服务器端编程。     
 * **JavaScript组成:** ECMAScript(JavaScript语法)、DOM(文档对象模型)访问HTML文档的所有元素、BOM(浏览器对象模型)它使JavaScript有能力与浏览器进行对话
@@ -255,15 +255,16 @@ let age;     // ntaxError: Identifier 'age' has already been declared
 // 对声明冗余报错不会因混用let 和var 而受影响; 这两个关键字声明的并不是不同类型的变量, 他们只是指出变量在相关作用域如何存在。
 ```
 ==**let变量提升*:**let 与var 的另一个区别就越是let 声明的变量不会在作用域中被提升==。
+
 ```javascript
 console.log(name);     // undefined
 var name = "zhou";
 // age 不会被提升
 console.log(age);     // ReferenceError: age is not defined
 let age = 26;
-// Javascript 引擎会注意出现在块后面的let 声明, 只不过再此之前不能以任何方式来引用未声明的变量;
-// 在let 声明之前的执行瞬间被称为“暂时性死区”, 在此阶段引用任何面后面声明的变量都会抛出ReferenceError。
-// 使用let 在全局作用域中声明的变量不会成为为window 对象的属性, var 声明的变量则会。
+// Javascript 引擎会注意出现在块后面的let声明, 只不过再此之前不能以任何方式来引用未声明的变量;
+// 在let 声明之前的执行瞬间被称为“暂时性死区”, 在此阶段引用任何后面声明的变量都会抛出ReferenceError。
+// 使用let 在全局作用域中声明的变量不会成为window对象的属性, var声明的变量则会。
 ```
 #### 3) const定义常量
 * conset 与let 基本相同, 唯一一个重要的区别是用它声明变量时必须同时初始化变量, 且尝试修改const 声明的变量会导致运行时错误。
@@ -271,8 +272,8 @@ let age = 26;
 ```javascript
 const name = "dada";
 name = "da";        // typeError: Assignment to constant variable
-// const 也不允许重复声明, 声明的作用域也是块。
-// const 声明的限制只适用于它指向的变量的引用;换句话说, 如果const 变量引用的是一个对象, 那么修改这个对象内部的属性并不违反const的限制。
+// const也不允许重复声明, 声明的作用域也是块。
+// const声明的限制只适用于它指向的变量的引用;    换句话说, 如果const变量引用的是一个对象, 那么修改这个对象内部的属性并不违反const的限制。
 ```
 ### 2.6 区块
 * Javascript 使用大括号, 将多个相关的语句组合在一起,  称为“区块”(block)。
@@ -1402,6 +1403,10 @@ let multiply = (a, b) => {
 };
 console.log(multiply(2, 3));            // 6
 // 这个箭头函数表达式创建了一个名为multiply 的匿名函数，它接受两个参数并返回它们的乘积。
+// 箭头函数的基本结构是：(参数) => { 函数体 }
+// 	  参数(可选): 箭头函数可以接受多个参数, 用括号括起来; 如果只有一个参数, 括号可以省略; 如果没有参数, 或者有多个参数时, 括号是必须的。
+//    函数体: 箭头函数的函数体可以是一个表达式或一个代码块。如果函数体只有一条语句, 可以省略大括号和return关键字, 直接写出表达式, 并将其值作为返回值;
+//           如果函数体有多条语句, 则需要使用大括号括起来, 并且需要使用return关键字来返回值。
 
 
 // 方式3: Function 构造函数
@@ -1415,7 +1420,7 @@ function add(x, y) {
     return x + y; 
 }
 // Function 构造函数接受三个参数, 除了最后一个参数是add函数的“函数体”, 其他参数都是add函数的参数; 这三个参数都需要包裹在单双引号内。
-// 这种声明函数方式非常不直观, 几乎无人使用
+// 这种声明函数方式非常不直观【反爬常用】
 // 如果同一个函数被多次声明, 后面的声明就会覆盖前面的声明
 ```
 
@@ -1511,13 +1516,13 @@ function add(x, y) {
 * 如果采用赋值语句定义函数, Javascript 就会报错。
 
   ```javascript
-  // 需要注意的是, 只有函数声明才会被提升, 而函数表达式不会被提升。
+  // 需要注意的是, 只有函数声明式才会被提升, 而函数表达式不会被提升。
   f();
   var f = function() {};       // TypeError: f is not a function
   // 等同于
   var f;
   f();
-  f = function() {}
+  f = function() {};
   // 调用f的时候, f只是被声明了, 还没有被赋值, 等于undefined 所以会报错。
   ```
 
@@ -1841,9 +1846,7 @@ function add(x, y) {
   fun()           // 0
   ```
 
-  * **【`arguments`与数组的关系】** `arguments` 很像数组, 但它是一个对象。数组专有的方法(slice、forEach), 不能在`arguments`对象上直接使用; 
-
-    如果要让`arguments`对象使用数组的方法, 解决方法是将`arguments`转为真正的数组。 
+  * **【`arguments`与数组的关系】** `arguments` 很像数组, 但它是一个对象。数组专有的方法(slice、forEach), 不能在`arguments`对象上直接使用;  如果要让`arguments`对象使用数组的方法, 解决方法是将`arguments`转为真正的数组。 
 
   ```javascript
   // slice 方法
@@ -1864,7 +1867,7 @@ function add(x, y) {
   }
   fun(1, 3, 5)
   ```
-
+  
   * `arguments`对象的`callee`属性返回它所对应的原函数。
 
   ```javascript
@@ -2879,7 +2882,7 @@ saveText(this.text || '')    // 如果函数调用时, 没有提供参数, 则�
 // 简化记忆就是 一个二进制数与自身的取反值再加负一(-1)
 ~ -3       // 2
 // 对一个整数连续两次二进制否运算得到它自身
-~~ 3 
+~~ 3      // 3
 // 所有的位运算都只对整数有效;二进制否运算遇到小数时, 也会将小数部分舍去, 只保留整数部分。
 ~~ 1.233333   // 1 使用二进制否运算取整, 是所有取整方法中最快的一种。
 //对字符串进行二进制否运算,Javascript 引擎会先调用Number函数, 将字符串转为数值。
@@ -2993,7 +2996,7 @@ f();       // 1
 
 ### 运算符优先级：
 
-![image-20230614234355808](https://raw.githubusercontent.com/tzw160702/js-reverse/main/images/202306142348628.png?raw=true)
+![image-20230614234355808](https://raw.githubusercontent.com/tzw160702/js-reverse/main/images/202306142348628.png)
 
 ## 5 数据类型转换
 
