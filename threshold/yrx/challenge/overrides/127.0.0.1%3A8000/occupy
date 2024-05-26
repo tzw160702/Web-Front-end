@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Table</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+        .paginator {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #myTable {
+            border-collapse: collapse;
+            text-align: center;
+        }
+        #myTable td, #myTable th {
+            border: 1px solid black;
+            width: 35px; /* 设置单元格宽度为 100 像素 */
+            height: 35px; /* 设置单元格高度为 50 像素 */
+            padding: 8px; /* 设置单元格内边距 */
+            text-align: center; /* 设置文本居中对齐 */
+            top: 20%;
+            left: 50%;
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="paginator">
+        <div class="hidden">[[[1, 2], 0], [[1, 3], 1], [[2, 2], 0], [[2, 3], 0]]</div>
+        <div><p>传感器 5x5 监视</p></div>
+        <table id="myTable">
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // JavaScript 代码，动态填充数据
+        var table = document.getElementById("myTable");
+        var text = document.getElementsByClassName('hidden')[0].innerText;
+        var arrs = JSON.parse(text)
+        for ( arr of arrs) {
+            table.rows[arr[0][0]].cells[arr[0][1]].innerText = arr[1];
+        }
+    </script>
+</body>
+</html>

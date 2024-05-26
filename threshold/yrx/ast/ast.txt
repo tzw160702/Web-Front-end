@@ -1,0 +1,96 @@
+AST：Abstract Syntax Tree（抽象语法树），是源代码语法结构的一种抽象表示。它以树状的形式表现编程语言的语法结构，树上的每个节点都表示源代码中的一种结构。
+在 JavaScript 中，任何一个对象（变量、函数、表达式等）都可以转化为一个抽象语法树的形式。抽象语法树本质就是一个树形结构的对象。
+
+
+其实在不同种语言 不同种框架/库/体系 之下，代码解析成的语法树区别比较大。我们只关注'babel'
+babel 可以理解为是一对插件组成的集合，用于 JavaScript 编译的。我们用的是它的插件/组件/工具软件包。
+这个库提供了很多的操作js代码的方法。但是目前文档非常的不充分不稳定，所以看官方文档的话可能会非常难受。如果想要完整的学习它做了什么，可能得看源码(ts)。
+
+# 官方文档：https://www.babeljs.cn/docs/babel-parser
+# ast在线工具：https://astexplorer.net/
+
+# 安装:
+    `npm install @babel/parser`      将js代码转换成ast
+    `npm install @babel/traverse`    遍历ast中的节点
+    `npm install @babel/types`       判断节点类型和生成新的节点等
+    `npm install @babel/generator`   把ast转换成js
+
+1. ast在线工具使用
+    (1)*引擎一定要选择 @babel/parser，语言选择JS
+    (2)左侧为原始代码代码区，右侧为ast解析之后的语法树，左侧选中代码任意位置右侧会跟随跳转
+    (3)点击json可以看到其实是一个json文本，找到program下的body(只关注它)
+    (4) body下每个key的含义：以代码`var a=1;`为例
+        type: VariableDeclaration  代表变量声明
+        start/end  相对于全文的开始位置与结束位置，如果没有特殊情况，这两个值一般我们用不到
+        declarations:数组在本处可以理解为 变量声明的具体内容:
+            type: VariableDeclarator 变量声明符。 可以理解为----->  "a=1",包含等号在内的 等号两边儿的内容
+            start/end
+            id 标志: 在本处就可以理解为变量声明符包含的等号左边的声明变量名(Identifier 即为标识符，name就是变量声明的名字，也就是字符串a)
+            init 初始化: 在本处可以理解为声明的变量(value 就是值，也可以理解为真实的值。 extra 附加值，也就是展示出来的样子。)
+        kind 表示声明的种类，即 var/let/const
+
+2. api使用:
+    (1)js代码转ast语法树：
+        parse = require("@babel/parser").parse
+        或者直接es6 写法
+        let {parse} = require("@babel/parser")
+        之后只需要直接： parse(code)，就可以把一段js代码的文本AST化了
+    (2)ast转js代码:
+        let traverse 函数要传入两个参数 = require("@babel/generator").default
+        console.log(generate)
+        let out_code = generate(ast).code
+        console.log(out_code)
+        参数：generate可以传入三个参数，一个是ast语法树，第二个是配置传入的是一个对象，第三个配置可以输出源代码，让程序进行参考
+            配置中比较常用的三个是：
+                retainLines     尝试输出代码中使用与源代码（第三个参数）一样的行号  默认 false
+                comments    输出结果是否包含注释  默认 true
+                minified    是否压缩输出  默认 false
+                剩下的配置在【https://www.babeljs.cn/docs/babel-generator】
+                    auxiliaryCommentBefore	在输出文件内容的头部添加注释块文字
+                    auxiliaryCommentAfter	在输出文件内容的末尾添加注释块文字
+                    compact	输出内容是否不添加空格，避免格式化
+                    concise	输出内容是否减少空格使其更紧凑一些
+                    minified	是否压缩输出代码
+    (3)遍历ast语法树:
+        traverse = require("@babel/traverse")
+        traverse 函数要传入两个参数:
+            参数1: ast,
+            参数2：{} 例如{FunctionDeclaration: function(path){}} 键'FunctionDeclaration' 遍历的节点类型，值'function(path){}' 遍历过程中的函数，会给这个函数传一个参数path，函数内是对节点的操作
+                     这个对象的键除了可以输入遍历的节点类型之外，还可以输入键： enter 和 exit。这两个表示的含义是: enter：进入节点的操作, exit：退出节点的操作
+                     在遍历节点时，一般一个节点有两次机会，一次进入，一次退出。当没有指明以什么方式进行遍历时，会默认以enter进入方式进行遍历
+                     enter: 进去的时候遍历，也就是可以理解为，从最外边往深处去
+                     exit: 出去的时候，再遍历，也就是可以理解为，从最深处往外边来
+
+        所有的节点类型以及 node 和 path的区别(这两者区别很重要，必须记住):
+            node: ast实际上就是node，它是构造函数 Node 的实例化对象，它只具有对象属性（可以说，它就是个对象，除了有__clone方法之外）。
+                可以将node理解成整个ast的语法树，是个对象
+            path: path实际上是traverse的过程中，遍历的时候babel给我们传进去的一个对象，这个对象是构造函数 NodePath 的实例化对象, 这个对象相对于node，具有非常非常多的功能和方法帮助我们方便操作
+                其中这个对象的node属性就可以取到遍历的内容里面的 node, 对 path.node 的操作也是可以直接修改原始的ast。path还有 traverse 函数的，也就是说通过path还可以去遍历里面的path
+                包含node在内的，一个集成了多个api的对象
+    (4)作用域与绑定【scope】
+        scope.path: 获取当前作用域块儿的path
+        path.scope.block: 可以理解为是 path的Node，是作用域所在块的Node
+        path.scope.parent: 就是返回上一级的作用域，也是一个 Scope对象
+        path.scope.bindings:  返回一个对象，这个对象的 key 就是变量名，value 是一个 Binding 对象。
+        path.scope.rename(oldName, newName, block): 去重命名所有的变量, 修改当前作用域下的的指定的变量名，oldname、newname表示替换前后的变量名，为字符串。注意，oldName需要有binding，否则无法重命名。
+
+
+3. ast控制流平坦化处理待实操(sec18-ast视频55分钟左右有讲怎么处理)
+
+
+4. path里面有一个 scope对象
+scope 的作用主要是查找标识符的作用域、获取并修改标识符的所有引用等，删除未使用变量主要用到了 scope.getBinding() 方法，传入的值是当前节点能够引用到的标识符名称，返回的关键属性有以下几个：
+	identifier：标识符的 Node 对象；
+	path：标识符的 NodePath 对象；
+	constant：标识符是否为常量；
+	referenced：标识符是否被引用；
+	references：标识符被引用的次数；
+	constantViolations：如果标识符被修改，则会存放所有修改该标识符节点的 Path 对象；
+	referencePaths：如果标识符被引用，则会存放所有引用该标识符节点的 Path 对象。
+
+scop常用方法：
+	scope.getBinding() 方法获取到它绑定的节点
+
+5. 其它常用方法、属性
+    1)判断path的类型: 使用path.isXXX方法   例：path.isStringLiteral()
+    2)判断node的类型，用于给定节点类型的检查: 使用types.isxxx(node)  例：`types.isContinueStatement(continueNode)`
